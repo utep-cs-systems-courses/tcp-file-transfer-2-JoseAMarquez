@@ -5,7 +5,7 @@ import socket, sys, re
 
 sys.path.append("../lib")       # for params
 import params
-
+from os.path import exists
 from framedSock import framedSend, framedReceive
 
 
@@ -43,3 +43,41 @@ if s is None:
     sys.exit(1)
 
 s.connect(addrPort)
+
+loop = True
+
+while loop:
+    infile = input("What is the name of the file?(Type exit to exit program)")
+
+    if infile == "exit":
+        loop = False
+        sys.exit(0)
+
+
+
+    if exists(infile):
+        file = pathlib.Path(infile)
+        txt = file.read()
+
+        if len(txt) == 0:
+            print("File is empty")
+        else:
+            framedSend(s,outfile.encode(),debug)
+            fileExist = framedReceive(s,debug)
+            fileExist= fileExist.decode()
+            if fileExist:
+                print("File already in Server")
+                break
+            else:
+                try:
+                    framedSend(s, txt, debug)
+                except:
+                    print("Connection lost...")
+                    break
+                try:
+                    serverTxt = framedReceive(s,debug)
+                    print("Server says: %s" % serverTxt.decode())
+                except:
+                    print("Connection lost...")
+    else:
+        print("File dosent exists")
