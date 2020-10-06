@@ -43,7 +43,7 @@ while 1:
 
             if exists(payloadFileName):
                 framedSend(sock, b"True",1)
-                continue
+                
             else:
                 framedSend(sock, b"False",1)
                 try:

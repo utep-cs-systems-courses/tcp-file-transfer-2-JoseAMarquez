@@ -54,6 +54,7 @@ while 1:
 
         if len(txt) == 0:
             print("File is empty")
+
         else:
             framedSend(s,inFile.encode(),debug)
             try:
@@ -61,9 +62,9 @@ while 1:
                 fileExist = fileExist.decode()
             except:
                 print('error while recieving')
-            if fileExist == True:
+            if fileExist == "True":
                 print("File already in Server")
-                continue
+
             else:
                 try:
                     print("Sending message")
