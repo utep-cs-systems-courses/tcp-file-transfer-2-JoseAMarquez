@@ -1,8 +1,7 @@
 #! /usr/bin/env python3
 
 # Echo client program
-import socket, sys, re
-
+import socket, sys, re, os
 sys.path.append("../lib")       # for params
 import params
 from os.path import exists
@@ -43,41 +42,46 @@ if s is None:
     sys.exit(1)
 
 s.connect(addrPort)
-
 loop = True
 
-while loop:
-    infile = input("What is the name of the file?(Type exit to exit program)")
-
-    if infile == "exit":
-        loop = False
+while 1:
+    inFile = input("What is the name of the file?(Type exit to exit program)")
+    if inFile == "exit":
         sys.exit(0)
-
-
-
-    if exists(infile):
-        file = pathlib.Path(infile)
+    if exists(inFile):
+        file = open(inFile, mode = "r", encoding="utf-8")
         txt = file.read()
-
         if len(txt) == 0:
             print("File is empty")
         else:
-            framedSend(s,outfile.encode(),debug)
-            fileExist = framedReceive(s,debug)
-            fileExist= fileExist.decode()
-            if fileExist:
+            framedSend(s,inFile.encode(),debug)
+            try:
+                fileExist = framedReceive(s,debug)
+                fileExist = fileExist.decode()
+            except:
+                print('error while recieving')
+
+            if fileExist == True:
                 print("File already in Server")
-                break
             else:
+                print("Sending message")
+                framedSend(s, txt.encode(),debug)
                 try:
-                    framedSend(s, txt, debug)
+                    serverAns = framedReceive(s,debug);
+                    serverAns = serverAns.decode()
+                    print(serverAns)
                 except:
-                    print("Connection lost...")
-                    break
-                try:
-                    serverTxt = framedReceive(s,debug)
-                    print("Server says: %s" % serverTxt.decode())
-                except:
-                    print("Connection lost...")
+                    print('error while recieving ans')
     else:
         print("File dosent exists")
+
+
+s.shutdown(socket.SHUT_WR)
+
+while 1:
+    data = s.recv(1024).decode()
+    print("Received '%s'" % data)
+    if len(data) == 0:
+        break
+print("Zero length read.  Closing")
+s.close()
