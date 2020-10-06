@@ -51,6 +51,7 @@ while 1:
     if exists(inFile):
         file = open(inFile, mode = "r", encoding="utf-8")
         txt = file.read()
+
         if len(txt) == 0:
             print("File is empty")
         else:
@@ -60,16 +61,19 @@ while 1:
                 fileExist = fileExist.decode()
             except:
                 print('error while recieving')
-
             if fileExist == True:
                 print("File already in Server")
+                continue
             else:
-                print("Sending message")
-                framedSend(s, txt.encode(),debug)
+                try:
+                    print("Sending message")
+                    framedSend(s, txt.encode(),1)
+                except:
+                    print('error while sending txt')
                 try:
                     serverAns = framedReceive(s,debug);
                     serverAns = serverAns.decode()
-                    print(serverAns)
+                    print("Server Message: ",serverAns)
                 except:
                     print('error while recieving ans')
     else:

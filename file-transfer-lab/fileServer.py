@@ -27,21 +27,23 @@ lsock.listen(5)
 print("listening on:", bindAddr)
 
 from framedSock import framedSend, framedReceive
-done = True
+working = True
 
-while True:
+while 1:
     sock, addr = lsock.accept()
 
     if not os.fork():
         print("Connection from", addr)
-        while done:
+        while working:
             payloadFileName = framedReceive(sock, debug)
             if not payloadFileName:
+                working = False
                 break
             payloadFileName = payloadFileName.decode()
 
             if exists(payloadFileName):
                 framedSend(sock, b"True",1)
+                continue
             else:
                 framedSend(sock, b"False",1)
                 try:
@@ -54,7 +56,9 @@ while True:
                 except:
                     print("Connection with ",addr ,"lost 2")
                     sys.exit(0)
-            output = open(payloadFileName, 'wb')
-            output.write(payloadTxt.decode())
+                output = open(payloadFileName, 'a')
+                payloadTxt = payloadTxt.decode()
+                output.write(payloadTxt)
+                output.close()
 
 sock.close()
