@@ -43,18 +43,18 @@ while 1:
 
             if exists(payloadFileName):
                 framedSend(sock, b"True",1)
-                
+
             else:
                 framedSend(sock, b"False",1)
                 try:
                     payloadTxt = framedReceive(sock, debug)
                 except:
-                    print("Connection with ",addr ,"lost 1")
+                    print("Connection with ",addr ,"lost ")
                     sys.exit(0)
                 try:
                     framedSend(sock,b"Message Completed!",debug)
                 except:
-                    print("Connection with ",addr ,"lost 2")
+                    print("Connection with ",addr ,"lost ")
                     sys.exit(0)
                 output = open(payloadFileName, 'a')
                 payloadTxt = payloadTxt.decode()
